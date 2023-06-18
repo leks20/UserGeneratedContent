@@ -1,0 +1,34 @@
+@startuml OnlineCinemaService
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "Can interact with movies, leave comments, likes, and watch progress")
+
+System_Boundary(system, "Online Cinema Service") {
+    ContainerDb(Zookeeper, "Zookeeper", "Apache Zookeeper", "Provides distributed configuration, synchronization and naming registry for large distributed systems")
+    ContainerDb(Kafka, "Event Sourcing", "Kafka", "Streams movie watching events for processing")
+    Container_Boundary(ClickHouse, "ClickHouse Cluster") {
+        ContainerDb(ClickHouseNode1, "ClickHouse Node1", "ClickHouse", "Part of distributed OLAP database storing events for analytics")
+        ContainerDb(ClickHouseNode2, "ClickHouse Node2", "ClickHouse", "Part of distributed OLAP database storing events for analytics")
+        ContainerDb(ClickHouseNode3, "ClickHouse Node3", "ClickHouse", "Part of distributed OLAP database storing events for analytics")
+        ContainerDb(ClickHouseNode4, "ClickHouse Node4", "ClickHouse", "Part of distributed OLAP database storing events for analytics")
+    }
+    Container(client, "Client Application", "Docker Container", "Interacts with the ClickHouse Cluster")
+}
+
+Rel_D(user, client, "Interacts with movies")
+Rel(client, Kafka, "Sends movie watching events")
+Rel(Kafka, ClickHouseNode1, "Feeds events")
+Rel(Kafka, ClickHouseNode2, "Feeds events")
+Rel(Kafka, ClickHouseNode3, "Feeds events")
+Rel(Kafka, ClickHouseNode4, "Feeds events")
+Rel(client, ClickHouseNode1, "Queries processed data")
+Rel(client, ClickHouseNode2, "Queries processed data")
+Rel(client, ClickHouseNode3, "Queries processed data")
+Rel(client, ClickHouseNode4, "Queries processed data")
+Rel_U(ClickHouseNode1, Zookeeper, "Uses for coordination and configuration")
+Rel_U(ClickHouseNode2, Zookeeper, "Uses for coordination and configuration")
+Rel_U(ClickHouseNode3, Zookeeper, "Uses for coordination and configuration")
+Rel_U(ClickHouseNode4, Zookeeper, "Uses for coordination and configuration")
+@enduml

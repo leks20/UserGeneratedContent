@@ -1,0 +1,45 @@
+version: '3.10'
+services:
+    
+  postgres:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_SERVER: ${POSTGRES_SERVER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    container_name:
+      postgres
+    networks:
+      - ugc_network
+  
+  pg_discovery:
+    build: ./postgres
+    volumes:
+      - ./postgres:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+    networks:
+      - ugc_network
+
+  mongo_discovery:
+    build: ./MongoDB
+    volumes:
+      - ./MongoDB:/app
+    env_file:
+      - ./.env
+    networks:
+      - ugc_network
+
+volumes:
+  postgres_data:
+
+networks:
+  ugc_network:
+    name: ugc_network
+    external: true

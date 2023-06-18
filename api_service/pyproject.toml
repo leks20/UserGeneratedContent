@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "ugc-print-1"
+version = "0.1.0"
+description = ""
+authors = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+gunicorn = "^20.1.0"
+uvicorn = "^0.22.0"
+clickhouse-driver = "^0.2.6"
+aiokafka = "^0.8.0"
+jwt = "^1.3.1"
+python-jose = "^3.3.0"
+isort = "^5.12.0"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+mypy = "^1.3.0"
+redis = "^4.5.5"
+backoff = "^2.2.1"
+prometheus-client = "^0.16.0"
+psutil = "^5.9.5"
+motor = "^3.1.2"
+python-logstash = "^0.4.8"
+sentry-sdk = {version = "^1.24.0", extras = ["fastapi"]}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+pytest-asyncio = "^0.21.0"
+httpx = "^0.24.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py38"]
+skip-string-normalization = true
+extend-exclude = '''
+^/(
+  (
+    | \.git
+    | \.mypy_cache
+    | \.pytest_cache
+    | \.venv
+    | venv
+  )/
+)
+'''
+
+[tool.isort]
+line_length = 120
+combine_as_imports = true
+order_by_type = true
+include_trailing_comma = true
+use_parentheses = true
+multi_line_output = 3

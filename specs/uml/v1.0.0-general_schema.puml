@@ -1,0 +1,14 @@
+@startuml ecom-c1-customer
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(customer, "User")
+
+System_Boundary(system, "Online Cinema") {
+    Container(Auth, "Auth", "Сервис авторизации и обработки ролей пользователей")
+    Container(MoviesAPI, "MoviesAPI", "Основной сервис выдачи контента")
+    Container(UGC, "UGC", "Сервис для обработки контента пользователей(лайки, комменты, просмотры)")
+}
+Rel_D(customer, system, "Взаимодействие с сервисом")
+@enduml

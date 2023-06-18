@@ -1,0 +1,57 @@
+name: UGC
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9"]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+          python -m pip install --upgrade pip
+          pip install wemake-python-styleguide mypy
+          pip install mypy lxml
+
+    - name: Lint with wemake-python-styleguide
+      run: |
+        flake8 . --count --show-source --statistics --max-line-length=88 --ignore=D10,WPS,B008,C812 --exclude=api_service/tests/
+
+    - name: Lint with mypy
+      continue-on-error: true
+      run: |
+        mypy --html-report ./reports --ignore-missing-imports --exclude etl_kafka_to_redis/db/ .
+
+  telegram:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Pull Request:  ${{ github.head_ref }} ---> ${{ github.base_ref }}.
+
+            ${{ github.actor }} created commit:
+            ${{ github.event.commits[0].message }}
+
+            Repository: ${{ github.repository }}
+
+            Changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}

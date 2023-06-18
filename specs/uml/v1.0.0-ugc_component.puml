@@ -1,0 +1,25 @@
+@startuml ecom-c1-customer
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!include DEVICONS/redis.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "<$user> \n может оставить комментарии, лайк или продолжить просмотр фильма")
+
+Container_Ext(Auth, "Auth Service", "Flask, gevent","Сервис авторизации и обработки ролей пользователей")
+Container_Ext(MoviesAPI, "Movies API", "Uvicorn/FastApi","Просмотр фильмов, поиск ")
+
+System_Boundary(system, "UGC Service") {
+    Container(APIApplication, "API Application", "Uvicorn/FastApi", "Обеспечивает основное взаимодействие клиента с сервисом через [JSON/HTTPS/JWT]")
+    ContainerQueue(Kafka, "EventSourcing", "Kafka", "Стриминг событий(прогресс просмотра фильмов)")
+    ContainerDb(ClickHouse, "OLAP Storage", "ClickHouse", "Хранение событий для аналитики")
+    ContainerDb(Redis, "Database", "Redis", "Хранилище для быстрого доступа к актуальным данным", $sprite="redis")
+}
+Rel_D(user, APIApplication, "Запрос на сохранение или получение прогресса просмотра фильма")
+Rel_D(APIApplication, Kafka, "Передача события на хранение")
+Rel_R(Kafka, ClickHouse, "Сохранение событий", "Kafka Table Engine")
+Rel_U(Kafka, Redis, "ETL-процесс", "Python Script")
+Rel_R(APIApplication, Redis, "Получение актуальных данных")
+
+@enduml

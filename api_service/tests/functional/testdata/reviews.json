@@ -1,0 +1,31 @@
+[
+    {
+        "movie_id": "b3319a42-1685-4cb0-9b14-5cd1a1a98ed8",
+        "user_id": "11cbdc1d-5761-4a82-9140-8d84a8990396",
+        "text": "Great movie!",
+        "like_count": 5,
+        "dislike_count": 2,
+        "users_liked": [
+            "370df13d-9ed8-4d85-a933-bf1d4a9aeca7",
+            "42fa7b7d-9ea1-4a5a-8c7c-64a9bdab8c05"
+        ],
+        "users_disliked": [
+            "8d7b40c5-d6a3-4e4e-908f-9f1e6f55bb67"
+        ]
+    },
+    {
+        "movie_id": "d2999a37-1e44-455d-84f8-2f87fee28888",
+        "user_id": "3f67ef1b-d453-4f76-839a-5a8a6a8a9b0e",
+        "text": "Not so good movie.",
+        "like_count": 2,
+        "dislike_count": 5,
+        "users_liked": [
+            "1f52a1a2-3f8c-4c43-92a4-5b9bf3969f9e"
+        ],
+        "users_disliked": [
+            "2f3d9a1a-5b76-4d2b-912a-1e9b23a4bf98",
+            "6f1a2b3c-4b5d-432b-a2b3-98d5c4b5d6e7",
+            "4f5a2b3c-4b5d-432b-a2b3-98d5c4b5d6f7"
+        ]
+    }
+]

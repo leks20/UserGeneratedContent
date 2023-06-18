@@ -1,0 +1,94 @@
+version: '3.5'
+
+services:
+  zookeeper:
+    image: zookeeper:3.5
+    container_name: zookeeper_ClickHouse
+    hostname: zookeeper
+    networks:
+      - ugc_network
+
+  clickhouse-node1:
+    image: yandex/clickhouse-server
+    volumes:
+      - ./init_db_1.sh:/docker-entrypoint-initdb.d/init_db_1.sh
+      - ./data/node1:/etc/clickhouse-server
+    container_name: clickhouse-node1
+    hostname: clickhouse-node1
+    expose:
+      - "8123"
+      - "9000"
+    environment:
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC: ${KAFKA_TOPIC}
+      KAFKA_GROUP_NAME: ${KAFKA_GROUP_NAME}
+      KAFKA_FORMAT: ${KAFKA_FORMAT}
+    depends_on:
+      - zookeeper
+    networks:
+      - ugc_network
+
+  clickhouse-node2:
+    image: yandex/clickhouse-server
+    volumes:
+      - ./init_db_2.sh:/docker-entrypoint-initdb.d/init_db_2.sh
+      - ./data/node2:/etc/clickhouse-server
+    container_name: clickhouse-node2
+    hostname: clickhouse-node2
+    environment:
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC: ${KAFKA_TOPIC}
+      KAFKA_GROUP_NAME: ${KAFKA_GROUP_NAME}
+      KAFKA_FORMAT: ${KAFKA_FORMAT}
+    depends_on:
+      - zookeeper
+    networks:
+      - ugc_network
+
+  clickhouse-node3:
+    image: yandex/clickhouse-server
+    volumes:
+      - ./init_db_3.sh:/docker-entrypoint-initdb.d/init_db_3.sh
+      - ./data/node3:/etc/clickhouse-server
+    container_name: clickhouse-node3
+    hostname: clickhouse-node3
+    environment:
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC: ${KAFKA_TOPIC}
+      KAFKA_GROUP_NAME: ${KAFKA_GROUP_NAME}
+      KAFKA_FORMAT: ${KAFKA_FORMAT}
+    depends_on:
+      - zookeeper
+    networks:
+      - ugc_network
+
+  clickhouse-node4:
+    image: yandex/clickhouse-server
+    volumes:
+      - ./init_db_4.sh:/docker-entrypoint-initdb.d/init_db_4.sh
+      - ./data/node4:/etc/clickhouse-server
+    container_name: clickhouse-node4
+    hostname: clickhouse-node4
+    environment:
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC: ${KAFKA_TOPIC}
+      KAFKA_GROUP_NAME: ${KAFKA_GROUP_NAME}
+      KAFKA_FORMAT: ${KAFKA_FORMAT}
+    depends_on:
+      - zookeeper
+    networks:
+      - ugc_network
+
+  client:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      CLICKHOUSE_NODE1_HOST: ${CLICKHOUSE_NODE1_HOST}
+    networks:
+      - ugc_network
+
+networks:
+  ugc_network:
+    name: ugc_network
+    external: true
